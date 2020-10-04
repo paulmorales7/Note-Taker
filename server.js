@@ -13,26 +13,26 @@ app.use(express.static("public"));
 // require("./routes/htmlRoutes")(app);
 
 app.get("*", function (req, res) {
-    res.sendFile(__dirname, "/public/index.html")
+    res.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
 app.get("/notes", function (req, res) {
-    res.sendFile(__dirname, "/public/notes.html")
+    res.sendFile(path.join(__dirname, "/public/notes.html"))
     var json = getJson();
     res.json(json);
 })
 
-app.get("/public/notes", function (req, res) {
+app.get("/notes", function (req, res) {
     var json = getJson();
     res.json(json);
 })
 
-app.post("/public/notes", function (req, res) {
+app.post("/notes", function (req, res) {
     writeNote(req.body);
     res.json(getJson());
 })
 
-app.delete("/public/notes/:id", function (req, res) {
+app.delete("/notes/:id", function (req, res) {
     deleteNote(req.params.id);
     res.json(getJson())
 })
