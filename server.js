@@ -1,7 +1,7 @@
 var express = require("express");
 
 var fs = require("fs")
-
+var path = require("path")
 var app = express();
 var PORT = process.env.PORT || 3000;
 
@@ -19,34 +19,35 @@ app.get("*", function (req, res) {
 app.get("/notes", function (req, res) {
     res.sendFile(__dirname, "/public/notes.html")
     var json = getJson();
-    res.json(noteData);
+    res.json(json);
 })
 
-// app.get("/notes", function (req, res) {
-//     var json = getJson();
-//     res.json(noteData);
-// })
+app.get("/public/notes", function (req, res) {
+    var json = getJson();
+    res.json(json);
+})
 
-app.post("/notes", function (req, res) {
+app.post("/public/notes", function (req, res) {
     writeNote(req.body);
     res.json(getJson());
 })
 
-app.delete("/notes/:id", function (req, res) {
+app.delete("/public/notes/:id", function (req, res) {
     deleteNote(req.params.id);
     res.json(getJson())
 })
 
-function readJson() {
-    var read = fs.readFileSync(__dirname, "/db/db.json");
-    var json = JSON.parse(data);
+function getJson() {
+    var read = fs.readFileSync(path.join(__dirname, "/db/db.json"));
+    var json = JSON.parse(read);
     return json;
 }
 
 function writeNote(data) {
     var note = {
         title: data.title,
-        text: data.text
+        text: data.text,
+
     }
     return note;
 }
