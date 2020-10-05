@@ -12,14 +12,12 @@ app.use(express.static("public"));
 // require("./routes/apiRoutes")(app);
 // require("./routes/htmlRoutes")(app);
 
-app.get("*", function (req, res) {
+app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
 app.get("/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "/public/notes.html"))
-    var json = getJson();
-    res.json(json);
 })
 
 app.get("/notes", function (req, res) {
@@ -44,24 +42,24 @@ function getJson() {
 }
 
 function writeNote(data) {
-    var note = {
+    var object = {
         title: data.title,
         text: data.text,
 
     }
-    return note;
+    return object;
 }
 
 function saveData(data) {
-    var stringData = JSON.stringify(stringData);
-    fs.watchFileSync(__dirname, "/db/db.json", data)
+    var stringData = JSON.stringify(data);
+    fs.watchFileSync(__dirname, "/db/db.json", stringData)
 }
-var jsonArr = [];
+
 
 function addNote(note) {
     var json = getJson();
     var newNote = writeNote(note);
-    jsonArr.push(newNote);
+    json.push(newNote);
     savaData(json);
 }
 
