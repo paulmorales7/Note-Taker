@@ -20,17 +20,18 @@ app.get("/notes", function (req, res) {
     res.sendFile(path.join(__dirname, "/public/notes.html"))
 })
 
-app.get("/notes", function (req, res) {
+app.get("/api/notes", function (req, res) {
     var json = getJson();
     res.json(json);
 })
 
-app.post("/notes", function (req, res) {
-    writeNote(req.body);
+app.post("/api/notes", function (req, res) {
+    console.log("adding new note")
+    addNote(req.body);
     res.json(getJson());
 })
 
-app.delete("/notes/:id", function (req, res) {
+app.delete("/api/notes/:id", function (req, res) {
     deleteNote(req.params.id);
     res.json(getJson())
 })
@@ -43,9 +44,11 @@ function getJson() {
 
 function writeNote(data) {
     var object = {
+        id: data.id,
         title: data.title,
         text: data.text,
-
+        complete: false,
+        hidden: false
     }
     return object;
 }
@@ -53,6 +56,7 @@ function writeNote(data) {
 function saveData(data) {
     var stringData = JSON.stringify(data);
     fs.watchFileSync(__dirname, "/db/db.json", stringData)
+
 }
 
 
