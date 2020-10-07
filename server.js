@@ -5,9 +5,12 @@ var path = require("path")
 var app = express();
 var PORT = process.env.PORT || 3000;
 
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+
+const jsonArr = require("./db/db.json")
 
 // require("./routes/apiRoutes")(app);
 // require("./routes/htmlRoutes")(app);
@@ -21,57 +24,37 @@ app.get("/notes", function (req, res) {
 })
 
 app.get("/api/notes", function (req, res) {
-    var json = getJson();
-    res.json(json);
+    // var json = getJson();
+    return res.json(jsonArr);
 })
 
 app.post("/api/notes", function (req, res) {
     console.log("adding new note")
-    addNote(req.body);
-    res.json(getJson());
+
+    const randomId = Math.floor(Math.random() * 100)
+
+    const newNote = {
+        id: randomId,
+        title: req.body.title,
+        text: req.body.title
+    }
+    jsonArr.push(newNote);
+    return jsonArr
 })
 
 app.delete("/api/notes/:id", function (req, res) {
-    deleteNote(req.params.id);
-    res.json(getJson())
-})
-
-function getJson() {
-    var read = fs.readFileSync(path.join(__dirname, "/db/db.json"));
-    var json = JSON.parse(read);
-    return json;
-}
-
-function writeNote(data) {
-    var object = {
-        id: data.id,
-        title: data.title,
-        text: data.text,
-        complete: false,
-        hidden: false
+    console.log("deleting note")
+    for (var i = 0; i < jsonArr.length; i++) {
+        if (req.params.id == jsonArr[i].id) {
+            jsonArr.splice(i, 1);
+            return jsonArr
+        }
+        console.log(req.params.id)
+        console.log(jsonArr[i].id)
     }
-    return object;
-}
+    console.log(jsonArr)
 
-function saveData(data) {
-    var stringData = JSON.stringify(data);
-    fs.watchFileSync(__dirname, "/db/db.json", stringData)
-
-}
-
-
-function addNote(note) {
-    var json = getJson();
-    var newNote = writeNote(note);
-    json.push(newNote);
-    savaData(json);
-}
-
-function deleteNote(id) {
-    var json = getJson();
-    json[id].hide = true;
-    saveData[json];
-}
+})
 
 
 app.listen(PORT, function () {
